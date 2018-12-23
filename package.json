@@ -1,6 +1,6 @@
 {
-  "name": "skeleton",
-  "version": "0.0.1",
+  "name": "try-skeleton",
+  "version": "0.0.12",
   "main": "index.js",
   "repository": "https://github.com/TrySkeleton/Skeleton",
   "author": "TrySkeleton",
@@ -14,7 +14,7 @@
     "cors": "^2.8.5",
     "express": "^4.16.4",
     "mysql": "^2.16.0",
-    "skeleton-admin": "^0.0.4"
+    "skeleton-admin": "^0.0.5"
   },
   "devDependencies": {
     "errorhandler": "^1.5.0",
