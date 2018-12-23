@@ -1,0 +1,23 @@
+{
+  "name": "skeleton",
+  "version": "0.0.1",
+  "main": "index.js",
+  "repository": "https://github.com/TrySkeleton/Skeleton",
+  "author": "TrySkeleton",
+  "license": "MIT",
+  "private": false,
+  "scripts": {
+    "dev": "nodemon ./dev/app.js",
+    "install": ""
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.16.4",
+    "mysql": "^2.16.0",
+    "skeleton-admin": "^0.0.4"
+  },
+  "devDependencies": {
+    "errorhandler": "^1.5.0",
+    "nodemon": "^1.18.9"
+  }
+}
