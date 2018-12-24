@@ -62,6 +62,19 @@ const getArticlesCount = (_conn) => new Promise((resolve, reject) => {
     })
 })
 
+const getPublishedArticlesCount = (_conn) => new Promise((resolve, reject) => {
+
+    _conn.query(`SELECT id FROM articles WHERE published_at IS NOT NULL`, (err, result, fields) => {
+
+        if (err) {
+            reject(err)
+            return
+        }
+
+        resolve(result.length)
+    })
+})
+
 const createArticle = (_conn) => new Promise((resolve, reject) => {
 
     const title = "Untitled article"
@@ -98,6 +111,30 @@ const getArticlePreviews = (_conn, limit, offset) => new Promise((resolve, rejec
     }
 
     _conn.query(`SELECT id, slug, title, preview, created_at, updated_at, published_at FROM articles ORDER BY updated_at DESC LIMIT ${limit} OFFSET ${offset}`, (err, result, fields) => {
+
+        if (err) {
+            console.log(err)
+            reject(err)
+            return
+        }
+
+        resolve(result.map(row => Object.assign({}, row)))
+    })
+})
+
+const getPublishedArticlePreviews = (_conn, limit, offset) => new Promise((resolve, reject) => {
+
+    if (!(Number.isInteger(limit) && limit >= 0)) {
+        reject(_conn.ERROR_INVALID_LIMIT)
+        return
+    }
+
+    if (!(Number.isInteger(offset) && offset >= 0)) {
+        reject(_conn.ERROR_INVALID_OFFSET)
+        return
+    }
+
+    _conn.query(`SELECT id, slug, title, preview, created_at, updated_at, published_at FROM articles WHERE published_at IS NOT NULL ORDER BY updated_at DESC LIMIT ${limit} OFFSET ${offset}`, (err, result, fields) => {
 
         if (err) {
             console.log(err)
@@ -253,6 +290,8 @@ module.exports = conn => {
         createArticle : () => createArticle(conn),
         getArticlePreview: (id) => getArticlePreview(conn, id),
         getArticlePreviews: (limit, offset) => getArticlePreviews(conn, limit, offset),
+        getPublishedArticlesCount: () => getPublishedArticlesCount(conn),
+        getPublishedArticlePreviews: (limit, offset) => getPublishedArticlePreviews(conn, limit, offset),
         updateArticle: (id, changes) => updateArticle(conn, id, changes),
         deleteArticle: (id) => deleteArticle(conn, id),
         publishArticle: (id) => publishArticle(conn, id),
