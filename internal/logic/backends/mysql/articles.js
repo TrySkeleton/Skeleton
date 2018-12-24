@@ -1,3 +1,6 @@
+const ERROR_ARTICLE_NOT_FOUND = new Error("Article not found")
+const ERROR_INVALID_SLUG = new Error("Invalid article slug")
+
 const getArticle = (_conn, id) => new Promise((resolve, reject) => {
 
     if (!(Number.isInteger(id) && id >= 0)) {
@@ -21,9 +24,32 @@ const getArticle = (_conn, id) => new Promise((resolve, reject) => {
     })
 })
 
+const getArticleBySlug = (_conn, slug) => new Promise((resolve, reject) => {
+
+    if (typeof slug !== "string") {
+        reject(ERROR_INVALID_SLUG)
+        return
+    }
+
+    _conn.query(`SELECT * FROM articles WHERE slug='${slug}' LIMIT 1`, (err, result, fields) => {
+
+        if (err) {
+            reject(err)
+            return
+        }
+
+        if (result.length !== 1) {
+            reject(ERROR_ARTICLE_NOT_FOUND)
+            return
+        }
+
+        resolve({ ...result[0] })
+    })
+})
+
 const getArticlesCount = (_conn) => new Promise((resolve, reject) => {
 
-    _conn.query(`SELECT * FROM articles`, (err, result, fields) => {
+    _conn.query(`SELECT id FROM articles`, (err, result, fields) => {
 
         if (err) {
             reject(err)
@@ -36,14 +62,24 @@ const getArticlesCount = (_conn) => new Promise((resolve, reject) => {
 
 const createArticle = (_conn) => new Promise((resolve, reject) => {
 
-    _conn.query(`INSERT INTO articles (title, created_at) VALUES ('Untitled article', NOW())`, (err, result) => {
+    const title = "Untitled article"
 
-        if (err) {
-            reject(err)
-            return
-        }
+    titleToSlug(_conn, title).then(slug => {
 
-        resolve(result.insertId)
+        _conn.query(`INSERT INTO articles (title, slug, created_at) VALUES ('${title}', '${slug}', NOW())`, (err, result) => {
+
+            if (err) {
+                reject(err)
+                console.log(err)
+                return
+            }
+
+            resolve(result.insertId)
+        })
+
+    }).catch(err => {
+        console.log(err)
+        reject(err)
     })
 })
 
@@ -59,7 +95,7 @@ const getArticlePreviews = (_conn, limit, offset) => new Promise((resolve, rejec
         return
     }
 
-    _conn.query(`SELECT id, title, preview, created_at, updated_at, published_at FROM articles ORDER BY updated_at DESC LIMIT ${limit} OFFSET ${offset}`, (err, result, fields) => {
+    _conn.query(`SELECT id, slug, title, preview, created_at, updated_at, published_at FROM articles ORDER BY updated_at DESC LIMIT ${limit} OFFSET ${offset}`, (err, result, fields) => {
 
         if (err) {
             console.log(err)
@@ -81,7 +117,30 @@ const updateArticleContent = (_conn, changes) => new Promise((resolve, reject) =
     let query = ""
 
     if (typeof changes.title === "string") {
-        query = `,title='${data.title}'`
+
+        titleToSlug(_conn, data.title).then(slug => {
+
+            query = `,title='${data.title}',slug='${slug}'`
+
+            if (typeof changes.content === "string") {
+                query += `,content='${changes.content}',preview='${changes.content}'`
+            }
+
+            _conn.query(`UPDATE articles SET updated_at=NOW()${query} WHERE id=${changes.id}`, (err, result) => {
+
+                if (err) {
+                    reject(err)
+                    return
+                }
+
+                resolve()
+            })
+
+        }).catch(err => {
+            reject(err)
+        })
+
+        return
     }
 
     if (typeof changes.content === "string") {
@@ -153,10 +212,30 @@ const unpublishArticle = (_conn, id) => new Promise((resolve, reject) => {
     })
 })
 
+const titleToSlug = (_conn, title) => new Promise((resolve, reject) => {
+
+    const slug = title.replace(" ", "-").toLowerCase()
+
+    _conn.query(`SELECT id FROM articles WHERE slug LIKE '${slug}%'`, (err, result, fields) => {
+
+        if (err) {
+            reject(err)
+            return
+        }
+
+        if (result.length > 0) {
+            resolve(`${slug}-${ result.length + 1 }`)
+        } else {
+            resolve(slug)
+        }
+    })
+})
+
 module.exports = conn => {
 
     return {
         getArticle: (id) => getArticle(conn, id),
+        getArticleBySlug: (slug) => getArticleBySlug(conn, slug),
         getArticlesCount: () => getArticlesCount(conn),
         createArticle : () => createArticle(conn),
         getArticlePreview: (id) => getArticlePreview(conn, id),
@@ -164,6 +243,7 @@ module.exports = conn => {
         updateArticleContent: (changes) => updateArticleContent(conn, changes),
         deleteArticle: (id) => deleteArticle(conn, id),
         publishArticle: (id) => publishArticle(conn, id),
-        unpublishArticle: (id) => unpublishArticle(conn, id)
+        unpublishArticle: (id) => unpublishArticle(conn, id),
+        ERROR_ARTICLE_NOT_FOUND
     }
 }

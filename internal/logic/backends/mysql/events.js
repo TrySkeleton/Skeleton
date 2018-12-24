@@ -1,8 +1,8 @@
-const ERROR_EVENT_NOT_FOUND = "Requested event could not be found"
-const ERROR_INVALID_TITLE = "Event title must be valid string"
-const ERROR_INVALID_DESCRIPTION = "Event description must be valid string"
-const ERROR_INVALID_LOCATION = "Event location must be valid string"
-const ERROR_INVALID_BOOTH = "Event booth must be valid string"
+const ERROR_EVENT_NOT_FOUND = new Error("Requested event could not be found")
+const ERROR_INVALID_TITLE = new Error("Event title must be valid string")
+const ERROR_INVALID_DESCRIPTION = new Error("Event description must be valid string")
+const ERROR_INVALID_LOCATION = new Error("Event location must be valid string")
+const ERROR_INVALID_BOOTH = new Error("Event booth must be valid string")
 
 const getEvent = (_conn, id) => new Promise((resolve, reject) => {
 
@@ -122,6 +122,11 @@ module.exports = conn => {
         getEventsCount: () => getEventsCount(conn),
         getEvents: (limit, offset) => getEvents(conn, limit, offset),
         createEvent: (params) => createEvent(conn, params),
-        deleteEvent: (id) => deleteEvent(conn, id)
+        deleteEvent: (id) => deleteEvent(conn, id),
+        ERROR_EVENT_NOT_FOUND,
+        ERROR_INVALID_TITLE,
+        ERROR_INVALID_DESCRIPTION,
+        ERROR_INVALID_LOCATION,
+        ERROR_INVALID_BOOTH
     }
 }

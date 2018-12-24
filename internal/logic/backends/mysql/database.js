@@ -1,9 +1,9 @@
 const mysql = require("mysql")
 const process = require("process")
 
-const ERROR_INVALID_ID = "Invalid id"
-const ERROR_INVALID_LIMIT = "Limit must be integer"
-const ERROR_INVALID_OFFSET = "Offset must be integer"
+const ERROR_INVALID_ID = new Error("Invalid id")
+const ERROR_INVALID_LIMIT = new Error("Limit must be integer")
+const ERROR_INVALID_OFFSET = new Error("Offset must be integer")
 
 const createConnection = (opts) => {
 
@@ -14,9 +14,10 @@ const createConnection = (opts) => {
         "created_at datetime NOT NULL," +
         "updated_at datetime DEFAULT NULL," +
         "published_at datetime DEFAULT NULL," +
-        "title TEXT," +
-        "content LONGTEXT," +
-        "preview TEXT)", (err, res) => {
+        "title varchar(150) NOT NULL," +
+        "content MEDIUMTEXT," +
+        "preview TEXT," +
+        "slug varchar(150) NOT NULL UNIQUE KEY)", (err, res) => {
 
             if (err) {
                 console.log(err)
@@ -29,10 +30,10 @@ const createConnection = (opts) => {
         "created_at datetime NOT NULL," +
         "start datetime NOT NULL," +
         "end datetime NOT NULL," +
-        "title TEXT," +
+        "title varchar(150) NOT NULL," +
         "description TEXT," +
-        "location TEXT," +
-        "booth TEXT)", (err, res) => {
+        "location varchar(150)," +
+        "booth varchar(150))", (err, res) => {
 
             if (err) {
                 console.log(err)

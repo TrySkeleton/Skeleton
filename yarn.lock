@@ -8959,10 +8959,10 @@ sisteransi@^0.1.1:
   resolved "https://registry.yarnpkg.com/sisteransi/-/sisteransi-0.1.1.tgz#5431447d5f7d1675aac667ccd0b865a4994cb3ce"
   integrity sha512-PmGOd02bM9YO5ifxpw36nrNMBTptEtfRl4qUYl9SndkolplkrZZOW7PGHjrZL53QvMVj9nQ+TKqUnRsw4tJa4g==
 
-skeleton-admin@^0.0.4:
-  version "0.0.4"
-  resolved "https://registry.yarnpkg.com/skeleton-admin/-/skeleton-admin-0.0.4.tgz#5cd5d67b534c94e3690fe8d7088450662f830229"
-  integrity sha512-8ODQwLQP9LW+xSAfQv0t1beLz8uPaOVVg+sX3FQgyT/Ju6iDl6vPFAIHtZeS3DuO4XQs76gDdJzm0Ho/Ut0jTw==
+skeleton-admin@^0.0.5:
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/skeleton-admin/-/skeleton-admin-0.0.5.tgz#23a8a756e0a57befaae42bddccfeb9af7df237cc"
+  integrity sha512-rzFRJ1YcIMsEEBNuWKnp79aRFd8BbpppMzFZ+WkfCFXgXTxFImOJuBoVpn46avqYTRBr6HvaMGmkJDFNlwL1Cw==
   dependencies:
     bootstrap "^4.2.1"
     express "^4.16.4"
