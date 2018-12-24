@@ -12,7 +12,7 @@ const createConnection = (opts) => {
     conn.query(
         "CREATE TABLE IF NOT EXISTS articles (id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY," +
         "created_at datetime NOT NULL," +
-        "updated_at datetime DEFAULT NULL," +
+        "updated_at datetime NOT NULL," +
         "published_at datetime DEFAULT NULL," +
         "title varchar(150) NOT NULL," +
         "content MEDIUMTEXT," +

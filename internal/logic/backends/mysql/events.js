@@ -52,7 +52,7 @@ const getEvents = (_conn, limit, offset) => new Promise((resolve, reject) => {
         return
     }
 
-    _conn.query(`SELECT * FROM events WHERE start >= CURDATE() ORDER BY created_at DESC LIMIT ${limit} OFFSET ${offset}`, (err, result, fields) => {
+    _conn.query(`SELECT * FROM events ORDER BY start DESC LIMIT ${limit} OFFSET ${offset}`, (err, result, fields) => {
 
         if (err) {
             reject(err)

@@ -1,3 +1,5 @@
+const getTextFromHTML = require('html2plaintext')
+
 const ERROR_ARTICLE_NOT_FOUND = new Error("Article not found")
 const ERROR_INVALID_SLUG = new Error("Invalid article slug")
 
@@ -66,7 +68,7 @@ const createArticle = (_conn) => new Promise((resolve, reject) => {
 
     titleToSlug(_conn, title).then(slug => {
 
-        _conn.query(`INSERT INTO articles (title, slug, created_at) VALUES ('${title}', '${slug}', NOW())`, (err, result) => {
+        _conn.query(`INSERT INTO articles (title, slug, created_at, updated_at) VALUES ('${title}', '${slug}', NOW(), NOW())`, (err, result) => {
 
             if (err) {
                 reject(err)
@@ -107,9 +109,9 @@ const getArticlePreviews = (_conn, limit, offset) => new Promise((resolve, rejec
     })
 })
 
-const updateArticleContent = (_conn, changes) => new Promise((resolve, reject) => {
+const updateArticle = (_conn, id, changes) => new Promise((resolve, reject) => {
 
-    if (!(Number.isInteger(changes.id) && changes.id >= 0)) {
+    if (!(Number.isInteger(id) && id >= 0)) {
         reject(_conn.ERROR_INVALID_ID)
         return
     }
@@ -118,15 +120,26 @@ const updateArticleContent = (_conn, changes) => new Promise((resolve, reject) =
 
     if (typeof changes.title === "string") {
 
-        titleToSlug(_conn, data.title).then(slug => {
+        titleToSlug(_conn, changes.title).then(slug => {
 
-            query = `,title='${data.title}',slug='${slug}'`
+            query = `,title='${changes.title}',slug='${slug}'`
 
             if (typeof changes.content === "string") {
-                query += `,content='${changes.content}',preview='${changes.content}'`
+
+                let preview = getTextFromHTML(changes.content)
+
+                if (preview.length > 150) {
+
+                    preview = preview.substring(0, 150)
+
+                    const lastIndex = preview.lastIndexOf(" ")
+                    preview = `${preview.substring(0, lastIndex)}...`
+                }
+
+                query += `,content='${changes.content}',preview='${preview}'`
             }
 
-            _conn.query(`UPDATE articles SET updated_at=NOW()${query} WHERE id=${changes.id}`, (err, result) => {
+            _conn.query(`UPDATE articles SET updated_at=NOW()${query} WHERE id=${id}`, (err, result) => {
 
                 if (err) {
                     reject(err)
@@ -147,7 +160,7 @@ const updateArticleContent = (_conn, changes) => new Promise((resolve, reject) =
         query += `,content='${changes.content}',preview='${changes.content}'`
     }
 
-    _conn.query(`UPDATE articles SET updated_at=NOW()${query} WHERE id=${changes.id}`, (err, result) => {
+    _conn.query(`UPDATE articles SET updated_at=NOW()${query} WHERE id=${id}`, (err, result) => {
 
         if (err) {
             reject(err)
@@ -214,7 +227,7 @@ const unpublishArticle = (_conn, id) => new Promise((resolve, reject) => {
 
 const titleToSlug = (_conn, title) => new Promise((resolve, reject) => {
 
-    const slug = title.replace(" ", "-").toLowerCase()
+    const slug = title.replace(/ /g, "-").toLowerCase()
 
     _conn.query(`SELECT id FROM articles WHERE slug LIKE '${slug}%'`, (err, result, fields) => {
 
@@ -240,7 +253,7 @@ module.exports = conn => {
         createArticle : () => createArticle(conn),
         getArticlePreview: (id) => getArticlePreview(conn, id),
         getArticlePreviews: (limit, offset) => getArticlePreviews(conn, limit, offset),
-        updateArticleContent: (changes) => updateArticleContent(conn, changes),
+        updateArticle: (id, changes) => updateArticle(conn, id, changes),
         deleteArticle: (id) => deleteArticle(conn, id),
         publishArticle: (id) => publishArticle(conn, id),
         unpublishArticle: (id) => unpublishArticle(conn, id),
