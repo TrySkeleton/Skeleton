@@ -10,7 +10,7 @@ app.use(errorhandler({
 
 const skeleton = require('../index')({
     middleware: {
-        admin: true,
+        admin: false,
         crossOrigin: true
     },
     database: {

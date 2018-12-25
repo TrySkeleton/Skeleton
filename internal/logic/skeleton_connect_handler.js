@@ -52,12 +52,42 @@ const createSkeletonConnectHandler = (backend) => {
                 reject(err)
             })
 
+        } else if (action === "GET_EVENT") {
+
+            const id = requestPayload.id
+
+            backend.Events.getEvent(id).then(event => {
+                resolve(event)
+            }).catch(err => {
+                reject(err)
+            })
+
+        } else if (action === "DELETE_EVENT") {
+
+            const id = requestPayload.id
+
+            backend.Events.deleteEvent(id).then(() => {
+                resolve()
+            }).catch(err => {
+                reject(err)
+            })
+
         } else if (action === "CREATE_NEW_ARTICLE") {
 
             backend.Articles.createArticle().then(id => {
                 resolve(id)
             }).catch(err => {
                 reject(err)
+            })
+
+        } else if (action === "CREATE_EVENT") {
+
+            const { event } = requestPayload
+
+            backend.Events.createEvent(event).then(id => {
+                resolve(id)
+            }).catch(e => {
+                reject(e)
             })
 
         } else {

@@ -1,3 +1,7 @@
+const moment = require('moment')
+
+const ERROR_INVALID_START_DATE_FORMAT = new Error("Invalid start date format")
+const ERROR_INVALID_END_DATE_FORMAT = new Error("Invalid end date format")
 const ERROR_EVENT_NOT_FOUND = new Error("Requested event could not be found")
 const ERROR_INVALID_TITLE = new Error("Event title must be valid string")
 const ERROR_INVALID_DESCRIPTION = new Error("Event description must be valid string")
@@ -6,10 +10,12 @@ const ERROR_INVALID_BOOTH = new Error("Event booth must be valid string")
 
 const getEvent = (_conn, id) => new Promise((resolve, reject) => {
 
-    if (!(Number.isInteger(id) && id >= 0)) {
+    if (!(Number.isInteger(parseInt(id)) && id >= 0)) {
         reject(_conn.ERROR_INVALID_ID)
         return
     }
+
+    console.log("HALLO")
 
     _conn.query(`SELECT * FROM events WHERE id=${id} LIMIT 1`, (err, result, fields) => {
 
@@ -22,6 +28,8 @@ const getEvent = (_conn, id) => new Promise((resolve, reject) => {
             reject(ERROR_EVENT_NOT_FOUND)
             return
         }
+
+        console.log(result)
 
         resolve({ ...result[0] })
     })
@@ -65,28 +73,39 @@ const getEvents = (_conn, limit, offset) => new Promise((resolve, reject) => {
 
 const createEvent = (_conn, params) => new Promise((resolve, reject) => {
 
-    const { title, startDate, startTime, endDate, endTime, description, location, booth } = params
+    const { title, start, end, description, location, booth } = params
+
+    if(!moment(start, "YYYY-MM-DD HH:MM").isValid()) {
+        reject(ERROR_INVALID_START_DATE_FORMAT)
+        return
+    }
+
+    if(!moment(end, "YYYY-MM-DD HH:MM").isValid()) {
+        reject(ERROR_INVALID_END_DATE_FORMAT)
+        return
+    }
 
     if (typeof title !== "string") {
         reject(ERROR_INVALID_TITLE)
+        return
     }
 
     if (typeof description !== "string" && typeof description !== "undefined") {
         reject(ERROR_INVALID_DESCRIPTION)
+        return
     }
 
     if (typeof location !== "string" && typeof location !== "undefined") {
         reject(ERROR_INVALID_LOCATION)
+        return
     }
 
     if (typeof booth !== "string" && typeof booth !== "undefined") {
         reject(ERROR_INVALID_BOOTH)
+        return
     }
 
-    const start = "2018-12-22 18:00:00"
-    const end = "2018-12-30 20:00:00"
-
-    _conn.query(`INSERT INTO events (title, start, end, created_at) VALUES ('${title}', '${start}', '${end}', NOW())`, (err, result) => {
+    _conn.query(`INSERT INTO events (title, description, location, booth, start, end, created_at) VALUES ('${title}', '${description ? description : ""}', '${location ? location : ""}', '${booth ? booth : ""}', '${start}', '${end}', NOW())`, (err, result) => {
 
         if (err) {
             reject(err)
