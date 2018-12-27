@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "cors": "^2.8.5",
+    "diff-match-patch": "^1.0.4",
     "express": "^4.16.4",
     "html2plaintext": "^2.1.0",
     "moment": "^2.23.0",

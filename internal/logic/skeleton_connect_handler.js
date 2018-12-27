@@ -1,3 +1,8 @@
+const DiffMatchPatch = require("diff-match-patch")
+const crypto = require("crypto")
+
+const dmp = new DiffMatchPatch()
+
 const createSkeletonConnectHandler = (backend) => {
 
     return (requestPayload, resolve, reject) => {
@@ -31,6 +36,63 @@ const createSkeletonConnectHandler = (backend) => {
             backend.Articles.getArticlesCount().then(count => {
                 resolve(count)
             }).catch(err => {
+                reject(err)
+            })
+
+        } else if (action === "GET_ARTICLE") {
+
+            const { id } = requestPayload
+
+            backend.Articles.getArticle(id).then(article => {
+                resolve(article)
+            }).catch(err => {
+                console.log(err)
+                reject(err)
+            })
+
+        } else if (action === "PUBLISH_ARTICLE") {
+
+            const { id } = requestPayload
+
+            backend.Articles.publishArticle(id).then(() => resolve())
+                .catch(err => reject(err))
+
+        } else if (action === "PATCH_ARTICLE") {
+
+            const { id, patches, checkSum } = requestPayload
+
+            backend.Articles.getArticle(id).then(article => {
+
+                console.log("article.content")
+                console.log(article.content || "")
+
+                const patchedContent = dmp.patch_apply(patches, article.content || "")[0]
+                const patchedCheckSum = crypto.createHash('md5').update(patchedContent).digest("hex")
+
+                console.log("checkSum")
+                console.log(checkSum)
+                console.log("patchedCheckSum")
+                console.log(patchedCheckSum)
+                console.log("patches")
+                console.log(patches)
+                console.log("patchedContent")
+                console.log(patchedContent)
+
+                if (checkSum !== patchedCheckSum) {
+                    reject(new Error('Patch error, invalid checksum.'))
+                    return
+                }
+
+                backend.Articles.updateArticle(id, {
+                    content: patchedContent
+                }).then(() => resolve(checkSum))
+                    .catch(err => {
+                        console.log(err)
+                        reject(err)
+                    })
+
+            }).catch(err => {
+                console.log(err)
                 reject(err)
             })
 

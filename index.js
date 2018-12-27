@@ -18,7 +18,7 @@ const skeletonAdminMiddleware = skeletonAdmin({
 const createMiddleware = (opts) => {
 
     router.use('/skeleton', headers)
-    router.use('/skeleton/api', express.json())
+    router.use('/skeleton/api', express.json({ limit: '50mb', extended: true }))
     router.use('/skeleton/api/connect', connectHandler.middleware)
 
     if (opts.middleware.admin) {

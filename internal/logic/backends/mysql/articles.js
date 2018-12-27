@@ -79,7 +79,7 @@ const createArticle = (_conn) => new Promise((resolve, reject) => {
 
     const title = "Untitled article"
 
-    titleToSlug(_conn, title).then(slug => {
+    _titleToSlug(_conn, title).then(slug => {
 
         _conn.query(`INSERT INTO articles (title, slug, created_at, updated_at) VALUES ('${title}', '${slug}', NOW(), NOW())`, (err, result) => {
 
@@ -157,22 +157,13 @@ const updateArticle = (_conn, id, changes) => new Promise((resolve, reject) => {
 
     if (typeof changes.title === "string") {
 
-        titleToSlug(_conn, changes.title).then(slug => {
+        _titleToSlug(_conn, changes.title).then(slug => {
 
             query = `,title='${changes.title}',slug='${slug}'`
 
             if (typeof changes.content === "string") {
 
-                let preview = getTextFromHTML(changes.content)
-
-                if (preview.length > 150) {
-
-                    preview = preview.substring(0, 150)
-
-                    const lastIndex = preview.lastIndexOf(" ")
-                    preview = `${preview.substring(0, lastIndex)}...`
-                }
-
+                const preview = _contentToPreview(changes.content)
                 query += `,content='${changes.content}',preview='${preview}'`
             }
 
@@ -194,7 +185,8 @@ const updateArticle = (_conn, id, changes) => new Promise((resolve, reject) => {
     }
 
     if (typeof changes.content === "string") {
-        query += `,content='${changes.content}',preview='${changes.content}'`
+        const preview = _contentToPreview(changes.content)
+        query += `,content='${changes.content}',preview='${preview}'`
     }
 
     _conn.query(`UPDATE articles SET updated_at=NOW()${query} WHERE id=${id}`, (err, result) => {
@@ -262,7 +254,22 @@ const unpublishArticle = (_conn, id) => new Promise((resolve, reject) => {
     })
 })
 
-const titleToSlug = (_conn, title) => new Promise((resolve, reject) => {
+const _contentToPreview = (content) => {
+
+    let preview = getTextFromHTML(content)
+
+    if (preview.length > 150) {
+
+        preview = preview.substring(0, 150)
+
+        const lastIndex = preview.lastIndexOf(" ")
+        preview = `${preview.substring(0, lastIndex)}...`
+    }
+
+    return preview
+}
+
+const _titleToSlug = (_conn, title) => new Promise((resolve, reject) => {
 
     const slug = title.replace(/ /g, "-").toLowerCase()
 

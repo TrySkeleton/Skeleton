@@ -15,8 +15,6 @@ const getEvent = (_conn, id) => new Promise((resolve, reject) => {
         return
     }
 
-    console.log("HALLO")
-
     _conn.query(`SELECT * FROM events WHERE id=${id} LIMIT 1`, (err, result, fields) => {
 
         if (err) {
@@ -28,8 +26,6 @@ const getEvent = (_conn, id) => new Promise((resolve, reject) => {
             reject(ERROR_EVENT_NOT_FOUND)
             return
         }
-
-        console.log(result)
 
         resolve({ ...result[0] })
     })

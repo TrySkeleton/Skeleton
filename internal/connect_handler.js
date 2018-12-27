@@ -49,11 +49,13 @@ const middleware = (req, res, next) => {
 
         res.json(response)
 
-    }, (errorMessage) => {
+    }, (err) => {
+
+        console.log(err)
 
         const response = {
             type: 'ERROR',
-            error: errorMessage
+            error: err.message
         }
 
         res.json(response)

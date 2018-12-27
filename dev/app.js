@@ -1,7 +1,7 @@
 const express = require('express')
 const errorhandler = require('errorhandler')
 const app = express()
-const port = 8080
+const port = 7554
 
 app.use(errorhandler({
     dumpExceptions: true,
