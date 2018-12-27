@@ -161,13 +161,19 @@ const updateArticle = (_conn, id, changes) => new Promise((resolve, reject) => {
 
             query = `,title='${changes.title}',slug='${slug}'`
 
+            let values = []
+
             if (typeof changes.content === "string") {
 
                 const preview = _contentToPreview(changes.content)
-                query += `,content='${changes.content}',preview='${preview}'`
+                query += `,content=?,preview=?`
+                values.push(changes.content)
+                values.push(preview)
             }
 
-            _conn.query(`UPDATE articles SET updated_at=NOW()${query} WHERE id=${id}`, (err, result) => {
+            values.push(id)
+
+            _conn.query(`UPDATE articles SET updated_at=NOW()${query} WHERE id=?`, values, (err, result) => {
 
                 if (err) {
                     reject(err)
@@ -184,12 +190,19 @@ const updateArticle = (_conn, id, changes) => new Promise((resolve, reject) => {
         return
     }
 
+    let values = []
+
     if (typeof changes.content === "string") {
         const preview = _contentToPreview(changes.content)
-        query += `,content='${changes.content}',preview='${preview}'`
+        query += `,content=?,preview=?`
+
+        values.push(changes.content)
+        values.push(preview)
     }
 
-    _conn.query(`UPDATE articles SET updated_at=NOW()${query} WHERE id=${id}`, (err, result) => {
+    values.push(id)
+
+    _conn.query(`UPDATE articles SET updated_at=NOW()${query} WHERE id=?`, values, (err, result) => {
 
         if (err) {
             reject(err)

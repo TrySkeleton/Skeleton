@@ -33,7 +33,7 @@ const getEvent = (_conn, id) => new Promise((resolve, reject) => {
 
 const getEventsCount = (_conn) => new Promise((resolve, reject) => {
 
-    _conn.query(`SELECT * FROM events`, (err, result, fields) => {
+    _conn.query(`SELECT * FROM events WHERE end >= CURDATE()`, (err, result, fields) => {
 
         if (err) {
             reject(err)
@@ -56,7 +56,7 @@ const getEvents = (_conn, limit, offset) => new Promise((resolve, reject) => {
         return
     }
 
-    _conn.query(`SELECT * FROM events ORDER BY start DESC LIMIT ${limit} OFFSET ${offset}`, (err, result, fields) => {
+    _conn.query(`SELECT * FROM events WHERE end >= CURDATE() ORDER BY start LIMIT ${limit} OFFSET ${offset}`, (err, result, fields) => {
 
         if (err) {
             reject(err)
