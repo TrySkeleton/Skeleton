@@ -33,6 +33,19 @@ const getEvent = (_conn, id) => new Promise((resolve, reject) => {
 
 const getEventsCount = (_conn) => new Promise((resolve, reject) => {
 
+    _conn.query(`SELECT * FROM events`, (err, result, fields) => {
+
+        if (err) {
+            reject(err)
+            return
+        }
+
+        resolve(result.length)
+    })
+})
+
+const getCurrentEventsCount = (_conn) => new Promise((resolve, reject) => {
+
     _conn.query(`SELECT * FROM events WHERE end >= CURDATE()`, (err, result, fields) => {
 
         if (err) {
@@ -45,6 +58,29 @@ const getEventsCount = (_conn) => new Promise((resolve, reject) => {
 })
 
 const getEvents = (_conn, limit, offset) => new Promise((resolve, reject) => {
+
+    if (!(Number.isInteger(limit) && limit >= 0)) {
+        reject(_conn.ERROR_INVALID_LIMIT)
+        return
+    }
+
+    if (!(Number.isInteger(offset) && offset >= 0)) {
+        reject(_conn.ERROR_INVALID_OFFSET)
+        return
+    }
+
+    _conn.query(`SELECT * FROM events ORDER BY start LIMIT ${limit} OFFSET ${offset}`, (err, result, fields) => {
+
+        if (err) {
+            reject(err)
+            return
+        }
+
+        resolve(result.map(row => Object.assign({}, row)))
+    })
+})
+
+const getCurrentEvents = (_conn, limit, offset) => new Promise((resolve, reject) => {
 
     if (!(Number.isInteger(limit) && limit >= 0)) {
         reject(_conn.ERROR_INVALID_LIMIT)
@@ -135,7 +171,9 @@ module.exports = conn => {
     return {
         getEvent: (id) => getEvent(conn, id),
         getEventsCount: () => getEventsCount(conn),
+        getCurrentEventsCount: () => getCurrentEventsCount(conn),
         getEvents: (limit, offset) => getEvents(conn, limit, offset),
+        getCurrentEvents: (limit, offset) => getCurrentEvents(conn, limit, offset),
         createEvent: (params) => createEvent(conn, params),
         deleteEvent: (id) => deleteEvent(conn, id),
         ERROR_EVENT_NOT_FOUND,

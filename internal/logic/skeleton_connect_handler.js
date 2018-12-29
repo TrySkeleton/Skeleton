@@ -63,20 +63,8 @@ const createSkeletonConnectHandler = (backend) => {
 
             backend.Articles.getArticle(id).then(article => {
 
-                console.log("article.content")
-                console.log(article.content || "")
-
                 const patchedContent = dmp.patch_apply(patches, article.content || "")[0]
                 const patchedCheckSum = crypto.createHash('md5').update(patchedContent).digest("hex")
-
-                console.log("checkSum")
-                console.log(checkSum)
-                console.log("patchedCheckSum")
-                console.log(patchedCheckSum)
-                console.log("patches")
-                console.log(patches)
-                console.log("patchedContent")
-                console.log(patchedContent)
 
                 if (checkSum !== patchedCheckSum) {
                     reject(new Error('Patch error, invalid checksum.'))
