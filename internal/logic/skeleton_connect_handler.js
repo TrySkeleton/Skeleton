@@ -59,7 +59,7 @@ const createSkeletonConnectHandler = (backend) => {
 
         } else if (action === "PATCH_ARTICLE") {
 
-            const { id, patches, checkSum } = requestPayload
+            const { id, patches, checkSum, title } = requestPayload
 
             backend.Articles.getArticle(id).then(article => {
 
@@ -72,7 +72,8 @@ const createSkeletonConnectHandler = (backend) => {
                 }
 
                 backend.Articles.updateArticle(id, {
-                    content: patchedContent
+                    content: patchedContent,
+                    title
                 }).then(() => resolve(checkSum))
                     .catch(err => {
                         console.log(err)

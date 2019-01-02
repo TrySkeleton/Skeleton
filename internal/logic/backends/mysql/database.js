@@ -21,6 +21,7 @@ const createConnection = (opts) => {
 
             if (err) {
                 console.log(err)
+                console.error("Could not create 'articles' table")
                 process.exit(1)
             }
         })
@@ -37,6 +38,34 @@ const createConnection = (opts) => {
 
             if (err) {
                 console.log(err)
+                console.error("Could not create 'events' table")
+                process.exit(1)
+            }
+        })
+
+    conn.query(
+        "CREATE TABLE IF NOT EXISTS accounts (id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY," +
+        "created_at datetime NOT NULL," +
+        "email varchar(150) NOT NULL," +
+        "password varchar(128) NOT NULL)", (err, res) => {
+
+            if (err) {
+                console.log(err)
+                console.error("Could not create 'accounts' table")
+                process.exit(1)
+            }
+        })
+
+    conn.query(
+        "CREATE TABLE IF NOT EXISTS sessions (id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY," +
+        "account_id INT(6) NOT NULL," +
+        "token TEXT NOT NULL," +
+        "created_at datetime NOT NULL," +
+        "expires_at datetime NOT NULL)", (err, res) => {
+
+            if (err) {
+                console.log(err)
+                console.error("Could not create 'sessions' table")
                 process.exit(1)
             }
         })

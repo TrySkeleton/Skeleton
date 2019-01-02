@@ -13,6 +13,10 @@ const skeleton = require('../index')({
         admin: false,
         crossOrigin: true
     },
+    cloud: {
+        projectId: "curratec-219910",
+        storageBucket: "curratec-219910.appspot.com"
+    },
     database: {
         host: "localhost",
         user: "skeleton",

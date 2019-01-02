@@ -1,6 +1,6 @@
 const createConnection = require('./database')
 const Articles = require('./articles')
-const Events = require('./Events')
+const Events = require('./events')
 
 const createBackend = (opts) => {
 
