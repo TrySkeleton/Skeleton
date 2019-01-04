@@ -14,6 +14,7 @@ const createMySQLBackend = require('./internal/logic/backends/mysql')
 
 const authHandler = require('./internal/auth_handler')
 const fileHandler = require('./internal/file_handler')
+const errorHandler = require('./internal/error_handler')
 
 const router = express.Router()
 const skeletonAdminMiddleware = skeletonAdmin({
@@ -30,6 +31,7 @@ const createMiddleware = (opts) => {
     router.use('/skeleton/api/v1/connect', connectHandler.middleware)
     router.use('/skeleton/api/v1/upload', fileHandler(opts))
     router.use('/skeleton/api/v1/auth', authHandler)
+    router.use('/skeleton/api/v1/', errorHandler)
 
     router.use('/skeleton/api/v2', graphQL({
         schema: schema,

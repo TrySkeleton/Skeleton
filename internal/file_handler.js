@@ -3,11 +3,6 @@ const { Router } = require('express')
 const {Storage} = require('@google-cloud/storage')
 const multer  = require('multer')
 
-
-const getPublicUrl = (filename) => {
-    return `https://storage.googleapis.com/${bucketName}/${filename}`;
-}
-
 module.exports = (opts) => {
 
     const router = new Router()
@@ -48,17 +43,20 @@ module.exports = (opts) => {
         })
 
         stream.on('finish', () => {
+
             req.file.cloudStorageObject = gcsname
             file.makePublic().then(() => {
 
-                const publicUrl = getPublicUrl(gcsname)
+                const publicUrl = `https://storage.googleapis.com/${opts.cloud.storageBucket}/${gcsname}`
 
                 req.file.cloudStoragePublicUrl = publicUrl
-                console.log("Upload done:")
-                console.log(publicUrl)
                 res.json({
                     publicUrl: publicUrl
                 })
+
+            }).catch(err => {
+                console.error(err)
+                next(err)
             })
         })
 

@@ -286,7 +286,31 @@ const _titleToSlug = (_conn, title) => new Promise((resolve, reject) => {
 
     const slug = title.replace(/ /g, "-").toLowerCase()
 
-    _conn.query(`SELECT id FROM articles WHERE slug LIKE '${slug}%'`, (err, result, fields) => {
+    _conn.query(`SELECT id FROM articles WHERE slug LIKE '${slug}%'`, async (err, result, fields) => {
+
+        if (err) {
+            reject(err)
+            return
+        }
+
+        if (result.length === 0) {
+            resolve(slug)
+            return
+        }
+
+        let appendage = result.length + 1
+
+        while (!await _validDateSlug(_conn,`${ slug }-${ appendage }`)) {
+            appendage++
+        }
+
+        resolve(`${ slug }-${ appendage }`)
+    })
+})
+
+const _validDateSlug = (_conn, slug) => new Promise((resolve, reject) => {
+
+    _conn.query(`SELECT id FROM articles WHERE slug='${slug}'`, (err, result, fields) => {
 
         if (err) {
             reject(err)
@@ -294,9 +318,9 @@ const _titleToSlug = (_conn, title) => new Promise((resolve, reject) => {
         }
 
         if (result.length > 0) {
-            resolve(`${slug}-${ result.length + 1 }`)
+            resolve(false)
         } else {
-            resolve(slug)
+            resolve(true)
         }
     })
 })
