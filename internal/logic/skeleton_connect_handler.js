@@ -50,13 +50,32 @@ const createSkeletonConnectHandler = (backend) => {
                 reject(err)
             })
 
-        } else if (action === "PUBLISH_ARTICLE") {
+        } else if (action === "SET_ARTICLE_PUBLISH_STATE") {
+
+            const { id, publish } = requestPayload
+
+            if (publish) {
+                backend.Articles.publishArticle(id).then(() => resolve())
+                    .catch(err => reject(err))
+            } else {
+                backend.Articles.unpublishArticle(id).then(() => resolve())
+                    .catch(err => reject(err))
+            }
+        } else if (action === "SET_ARTICLE_COVER_URL") {
+
+            const { id, coverURL } = requestPayload
+
+
+        } else if (action === "DELETE_ARTICLE") {
 
             const { id } = requestPayload
 
-            backend.Articles.publishArticle(id).then(() => resolve())
-                .catch(err => reject(err))
-
+            backend.Articles.deleteArticle(id).then(() => {
+                resolve()
+            }).catch(err => {
+                console.log(err)
+                reject(err)
+            })
         } else if (action === "PATCH_ARTICLE") {
 
             const { id, patches, checkSum, title } = requestPayload

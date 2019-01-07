@@ -22,15 +22,17 @@ const skeletonAdminMiddleware = skeletonAdmin({
 })
 
 // opts are not used, but may be necessary in the future
-const createMiddleware = (opts) => {
+const createMiddleware = (opts, backend) => {
 
     router.use(express.json({ extended: true }))
 
+    const authMiddleware = authHandler.createAuthMiddleware(backend)
+
     router.use('/skeleton', headers)
-    router.use('/skeleton/api/v1/', express.json({ limit: '50mb', extended: true }))
-    router.use('/skeleton/api/v1/connect', connectHandler.middleware)
-    router.use('/skeleton/api/v1/upload', fileHandler(opts))
-    router.use('/skeleton/api/v1/auth', authHandler)
+    router.use('/skeleton/api/v1/', express.json({ extended: true }))
+    router.use('/skeleton/api/v1/connect', authMiddleware, connectHandler.middleware)
+    router.use('/skeleton/api/v1/upload', authMiddleware, fileHandler(opts))
+    router.use('/skeleton/api/v1/auth', authHandler.createAuthHandler(backend))
     router.use('/skeleton/api/v1/', errorHandler)
 
     router.use('/skeleton/api/v2', graphQL({
@@ -59,7 +61,7 @@ module.exports = (opts) => {
 
     })
 
-    const middleware = createMiddleware(opts)
+    const middleware = createMiddleware(opts, backend)
     const API = createAPI(backend)
 
     return {

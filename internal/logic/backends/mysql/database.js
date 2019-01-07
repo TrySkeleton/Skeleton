@@ -7,7 +7,7 @@ const ERROR_INVALID_OFFSET = new Error("Offset must be integer")
 
 const createConnection = (opts) => {
 
-    const conn = mysql.createConnection(opts.database)
+    const conn = mysql.createPool(opts.database)
 
     conn.query(
         "CREATE TABLE IF NOT EXISTS articles (id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY," +
@@ -17,6 +17,7 @@ const createConnection = (opts) => {
         "title varchar(150) NOT NULL," +
         "content MEDIUMTEXT," +
         "preview TEXT," +
+        "cover_image_url TEXT," +
         "slug varchar(150) NOT NULL UNIQUE KEY)", (err, res) => {
 
             if (err) {
@@ -66,6 +67,18 @@ const createConnection = (opts) => {
             if (err) {
                 console.log(err)
                 console.error("Could not create 'sessions' table")
+                process.exit(1)
+            }
+        })
+
+    conn.query(
+        "CREATE TABLE IF NOT EXISTS settings (id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY," +
+        "name TEXT NOT NULL," +
+        "value TEXT NOT NULL)", (err, res) => {
+
+            if (err) {
+                console.log(err)
+                console.error("Could not create 'settings' table")
                 process.exit(1)
             }
         })
