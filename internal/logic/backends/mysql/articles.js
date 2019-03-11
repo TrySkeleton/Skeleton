@@ -110,7 +110,7 @@ const getArticlePreviews = (_conn, limit, offset) => new Promise((resolve, rejec
         return
     }
 
-    _conn.query(`SELECT id, slug, title, preview, created_at, updated_at, published_at FROM articles ORDER BY updated_at DESC LIMIT ${limit} OFFSET ${offset}`, (err, result, fields) => {
+    _conn.query(`SELECT id, slug, title, preview, created_at, updated_at, published_at, cover_image_url FROM articles ORDER BY updated_at DESC LIMIT ${limit} OFFSET ${offset}`, (err, result, fields) => {
 
         if (err) {
             console.log(err)
@@ -134,7 +134,7 @@ const getPublishedArticlePreviews = (_conn, limit, offset) => new Promise((resol
         return
     }
 
-    _conn.query(`SELECT id, slug, title, preview, created_at, updated_at, published_at FROM articles WHERE published_at IS NOT NULL ORDER BY updated_at DESC LIMIT ${limit} OFFSET ${offset}`, (err, result, fields) => {
+    _conn.query(`SELECT id, slug, title, preview, created_at, updated_at, published_at, cover_image_url FROM articles WHERE published_at IS NOT NULL ORDER BY updated_at DESC LIMIT ${limit} OFFSET ${offset}`, (err, result, fields) => {
 
         if (err) {
             console.log(err)
@@ -249,6 +249,25 @@ const publishArticle = (_conn, id) => new Promise((resolve, reject) => {
     })
 })
 
+const setArticleCoverURL = (_conn, id, coverURL) => new Promise((resolve, reject) => {
+
+    if (!(Number.isInteger(id) && id >= 0)) {
+        reject(_conn.ERROR_INVALID_ID)
+        return
+    }
+
+    _conn.query(`UPDATE articles SET updated_at=NOW(), cover_image_url=? WHERE id=${id}`, [ coverURL ], (err, result) => {
+
+        if (err) {
+            console.log(err)
+            reject(err)
+            return
+        }
+
+        resolve()
+    })
+})
+
 const unpublishArticle = (_conn, id) => new Promise((resolve, reject) => {
 
     if (!(Number.isInteger(id) && id >= 0)) {
@@ -284,7 +303,13 @@ const _contentToPreview = (content) => {
 
 const _titleToSlug = (_conn, title) => new Promise((resolve, reject) => {
 
-    const slug = title.replace(/ /g, "-").toLowerCase()
+    let slug = title.replace(/ /g, "-").toLowerCase()
+    slug = slug.replace(/#/g, "")
+    slug = slug.replace(/\//g, "")
+    slug = slug.replace(/\?/g, "")
+    slug = slug.replace(/&/g, "")
+    slug = slug.replace(/--+/g, "-")
+    slug = slug.replace(/"/g, "")
 
     _conn.query(`SELECT id FROM articles WHERE slug LIKE '${slug}%'`, async (err, result, fields) => {
 
@@ -336,6 +361,7 @@ module.exports = conn => {
         getArticlePreviews: (limit, offset) => getArticlePreviews(conn, limit, offset),
         getPublishedArticlesCount: () => getPublishedArticlesCount(conn),
         getPublishedArticlePreviews: (limit, offset) => getPublishedArticlePreviews(conn, limit, offset),
+        setArticleCoverURL: (id, coverURL) => setArticleCoverURL(conn, id, coverURL),
         updateArticle: (id, changes) => updateArticle(conn, id, changes),
         deleteArticle: (id) => deleteArticle(conn, id),
         publishArticle: (id) => publishArticle(conn, id),

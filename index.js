@@ -2,9 +2,6 @@ const express = require('express')
 const cors = require('cors')
 const path = require('path')
 const skeletonAdmin = require('skeleton-admin')
-const graphQL = require('express-graphql')
-
-const { schema } = require('./internal/logic/graphql')
 
 const headers = require('./internal/headers_middleware')
 const connectHandler = require('./internal/connect_handler')
@@ -34,11 +31,6 @@ const createMiddleware = (opts, backend) => {
     router.use('/skeleton/api/v1/upload', authMiddleware, fileHandler(opts))
     router.use('/skeleton/api/v1/auth', authHandler.createAuthHandler(backend))
     router.use('/skeleton/api/v1/', errorHandler)
-
-    router.use('/skeleton/api/v2', graphQL({
-        schema: schema,
-        graphiql: true
-    }))
 
     if (opts.middleware.admin) {
         router.use(skeletonAdminMiddleware)

@@ -9,19 +9,7 @@ const createSkeletonConnectHandler = (backend) => {
 
         const action = requestPayload.action
 
-        if (action === "AUTH_WITH_ACCESS_PASSWORD") {
-
-            const password = requestPayload.password
-
-            if (password === "hallo1") {
-
-                const token = "GET_TOKEN"
-                resolve(token)
-            } else {
-                reject("Invalid credentials")
-            }
-
-        } else if (action === "GET_ARTICLES") {
+        if (action === "GET_ARTICLES") {
 
             const { limit, offset } = requestPayload
 
@@ -64,7 +52,8 @@ const createSkeletonConnectHandler = (backend) => {
         } else if (action === "SET_ARTICLE_COVER_URL") {
 
             const { id, coverURL } = requestPayload
-
+            backend.Articles.setArticleCoverURL(id, coverURL).then(() => resolve())
+                .catch(err => reject(err))
 
         } else if (action === "DELETE_ARTICLE") {
 

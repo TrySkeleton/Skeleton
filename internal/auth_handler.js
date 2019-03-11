@@ -1,4 +1,5 @@
 const createError = require('http-errors')
+const jwt = require("jsonwebtoken")
 
 const createAuthHandler = (backend) => {
 
@@ -9,7 +10,7 @@ const createAuthHandler = (backend) => {
         try {
 
             const account = await backend.Auth.getAccountFromCredentials(username, password)
-            const token = await backend.Auth.createSession(account.id)
+            const token = jwt.sign({ accountId: account.id }, "SECRET")
 
             res.json({
                 token
@@ -45,16 +46,11 @@ const createAuthMiddleware = (backend) => {
 
         try {
 
-            const isValid = await backend.Auth.isTokenValid(token)
-
-            if (isValid) {
-                next()
-            } else {
-                next(createError(401))
-            }
+            jwt.verify(token, "SECRET")
+            next()
 
         } catch(err) {
-            next(err)
+            next(createError(401, "Invalid token"))
         }
     }
 }

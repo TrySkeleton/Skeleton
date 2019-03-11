@@ -19,9 +19,9 @@ const skeleton = require('../index')({
     },
     database: {
         host: "localhost",
-        user: "skeleton",
+        user: "skeleton-prod",
         database: "skeleton",
-        password: "tv5W9egsS4hLRSx",
+        password: "dGPqm4QeRKHHb2X",
     }
 })
 

@@ -1,7 +1,16 @@
+const bcrypt = require("bcrypt")
+
 const ERROR_EMAIL_ALREADY_USED = new Error("Email already used")
 const ERROR_INVALID_CREDENTIALS = new Error("Invalid credentials")
 
-const createAccount = (_conn, email, passwordHash) => new Promise((resolve, reject) => {
+const createAccount = (_conn, email, passwordHash) => new Promise(async (resolve, reject) => {
+
+    try {
+        password = await bcrypt.hash(password, 10)
+    } catch (e) {
+        reject(e)
+        return
+    }
 
     _conn.query(`INSERT INTO accounts (email, password, created_at) VALUES ('${email.toLowerCase()}', '${passwordHash}', NOW())`, (err, result) => {
 
@@ -62,9 +71,9 @@ const getAccountSessions = (_conn, accountId) => new Promise((resolve, reject) =
     })
 })
 
-const getAccountFromCredentials = (_conn, id, password) => new Promise((resolve, reject) => {
+const getAccountFromCredentials = (_conn, id, password) => new Promise(async (resolve, reject) => {
 
-    _conn.query(`SELECT * FROM accounts WHERE email=? AND password=?`, [id, password], (err, result, fields) => {
+    _conn.query(`SELECT * FROM accounts WHERE email=?`, [id], async (err, result, fields) => {
 
         if (err) {
             reject(err)
@@ -76,11 +85,21 @@ const getAccountFromCredentials = (_conn, id, password) => new Promise((resolve,
             return
         }
 
+        try {
+            const passwordIsValid = await bcrypt.compare(password, result[0].password)
+            if (!passwordIsValid) {
+                reject(ERROR_INVALID_CREDENTIALS)
+                return
+            }
+        } catch (e) {
+            reject(ERROR_INVALID_CREDENTIALS)
+            return
+        }
+
         resolve({ ...result[0] })
     })
 })
 
-// TODO: Cache tokens used in the last minutes
 const isTokenValid = (_conn, token) => new Promise((resolve, reject) => {
 
     console.log("isTokenValid")

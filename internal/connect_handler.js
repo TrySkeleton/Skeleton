@@ -55,7 +55,7 @@ const middleware = (req, res, next) => {
 
         const response = {
             type: 'ERROR',
-            error: err.message
+            error: err.message ? err.message : err
         }
 
         res.json(response)
