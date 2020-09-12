@@ -7071,9 +7071,9 @@ no-case@^2.2.0:
     lower-case "^1.1.1"
 
 node-fetch@^2.2.0:
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.3.0.tgz#1a1d940bbfb916a1d3e0219f037e89e71f8c5fa5"
-  integrity sha512-MOd8pV3fxENbryESLgVIeaGKrdl+uaYhCSSVkjeOb/31/njTpcis5aWfdqgNlHIrKOLRbMnfPINPOML2CIFeXA==
+  version "2.6.1"
+  resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.1.tgz#045bd323631f76ed2e2b55573394416b639a0052"
+  integrity sha512-V4aYg89jEoVRxRb2fJdAg8FHvI7cEyYdVAh94HH0UIK8oJxUfkjlDQN9RbMx+bEjP7+ggMiFRprSti032Oipxw==
 
 node-forge@0.7.5:
   version "0.7.5"
@@ -9557,10 +9557,10 @@ sisteransi@^0.1.1:
   resolved "https://registry.yarnpkg.com/sisteransi/-/sisteransi-0.1.1.tgz#5431447d5f7d1675aac667ccd0b865a4994cb3ce"
   integrity sha512-PmGOd02bM9YO5ifxpw36nrNMBTptEtfRl4qUYl9SndkolplkrZZOW7PGHjrZL53QvMVj9nQ+TKqUnRsw4tJa4g==
 
-skeleton-admin@^0.0.16:
-  version "0.0.16"
-  resolved "https://registry.yarnpkg.com/skeleton-admin/-/skeleton-admin-0.0.16.tgz#ea8b72e03be027d32c2973a1af6c09d9e91effc1"
-  integrity sha512-xRKQKgBMZQ7raTAvWQKNZQ4AWkafReo3qY3l8EkoflXz4x/4YMiKWr75/2o5VJLY5ZtcJXp5fzxlB+kjHr5Rtw==
+skeleton-admin@^0.0.18:
+  version "0.0.18"
+  resolved "https://registry.yarnpkg.com/skeleton-admin/-/skeleton-admin-0.0.18.tgz#12e9acf8292a926db02543ec8f3f45555d55451c"
+  integrity sha512-xV7XHQZ+F3EPosCgmLgU9BVl1w+O0NMvwgfaNrYwf98X4+ed/xU//quOXh1iMldmsqStPBPBGcJH1UOFdSNHaQ==
   dependencies:
     bootstrap "^4.2.1"
     cropperjs "^1.4.3"
