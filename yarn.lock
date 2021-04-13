@@ -9557,10 +9557,10 @@ sisteransi@^0.1.1:
   resolved "https://registry.yarnpkg.com/sisteransi/-/sisteransi-0.1.1.tgz#5431447d5f7d1675aac667ccd0b865a4994cb3ce"
   integrity sha512-PmGOd02bM9YO5ifxpw36nrNMBTptEtfRl4qUYl9SndkolplkrZZOW7PGHjrZL53QvMVj9nQ+TKqUnRsw4tJa4g==
 
-skeleton-admin@^0.0.16:
-  version "0.0.16"
-  resolved "https://registry.yarnpkg.com/skeleton-admin/-/skeleton-admin-0.0.16.tgz#ea8b72e03be027d32c2973a1af6c09d9e91effc1"
-  integrity sha512-xRKQKgBMZQ7raTAvWQKNZQ4AWkafReo3qY3l8EkoflXz4x/4YMiKWr75/2o5VJLY5ZtcJXp5fzxlB+kjHr5Rtw==
+skeleton-admin@^0.0.18:
+  version "0.0.18"
+  resolved "https://registry.yarnpkg.com/skeleton-admin/-/skeleton-admin-0.0.18.tgz#12e9acf8292a926db02543ec8f3f45555d55451c"
+  integrity sha512-xV7XHQZ+F3EPosCgmLgU9BVl1w+O0NMvwgfaNrYwf98X4+ed/xU//quOXh1iMldmsqStPBPBGcJH1UOFdSNHaQ==
   dependencies:
     bootstrap "^4.2.1"
     cropperjs "^1.4.3"
@@ -11058,9 +11058,9 @@ xtend@^4.0.0, xtend@~4.0.1:
   integrity sha1-pcbVMr5lbiPbgg77lDofBJmNY68=
 
 y18n@^3.2.1:
-  version "3.2.1"
-  resolved "https://registry.yarnpkg.com/y18n/-/y18n-3.2.1.tgz#6d15fba884c08679c0d77e88e7759e811e07fa41"
-  integrity sha1-bRX7qITAhnnA136I53WegR4H+kE=
+  version "3.2.2"
+  resolved "https://registry.yarnpkg.com/y18n/-/y18n-3.2.2.tgz#85c901bd6470ce71fc4bb723ad209b70f7f28696"
+  integrity sha512-uGZHXkHnhF0XeeAPgnKfPv1bgKAYyVvmNL1xlKsPYZPaIHxGti2hHqvOCQv71XMsLxu1QjergkqogUnms5D3YQ==
 
 "y18n@^3.2.1 || ^4.0.0", y18n@^4.0.0:
   version "4.0.0"
